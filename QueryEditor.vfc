@@ -1,0 +1,24 @@
+<apex:component selfClosing="true" controller="QueryResultsController" layout="block" >
+    
+    <apex:attribute name="query" description="This is the value for the component."
+                    type="String" required="true" assignTo="{!queryString}"/>
+    
+    <apex:outputText rendered="{!init}"  />
+    <apex:pageBlock id="queryResult" title="Query Results">
+        <apex:pageBlockTable value="{!results}" var="res" >
+            <apex:repeat value="{!fieldLabels}" var="fieldLabel">
+                <apex:column value="{!res[fieldLabel]}" />
+            </apex:repeat>
+        </apex:pageBlockTable>
+        <div align="left" style="margin-top:10px;" >
+            <apex:commandButton action="{!setController.first}" value="First" disabled="{!NOT(hasPrevious)}" reRender="queryResult"/>
+            <apex:commandButton action="{!setController.previous}" value="Previous" disabled="{!NOT(hasPrevious)}"  reRender="queryResult"/>
+            <apex:commandButton action="{!setController.next}" value="Next" disabled="{!NOT(hasNext)}" reRender="result"  />
+            <apex:commandButton action="{!setController.last}" value="Last" disabled="{!NOT(hasNext)}"  reRender="queryResult"/>
+            <span> Page: {!setController.pageNumber} of {! CEILING(setController.resultSize / setController.pageSize) }</span>
+        </div>
+        <apex:outputText rendered="{!showNoRecord}" value="No Record Available." />
+        <apex:outputText rendered="{!showInvalidQuery}" value="{!invalidQueryMessage}" />
+    </apex:pageBlock>
+    
+</apex:component>
