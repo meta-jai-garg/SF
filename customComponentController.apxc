@@ -1,0 +1,3 @@
+public class customComponentController {
+    public String query{get;set;}
+}
