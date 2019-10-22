@@ -1,0 +1,13 @@
+<apex:page docType="html-5.0" controller="customComponentController">
+    
+    <apex:form >
+        <apex:pageBlock title="Query Editor">
+            <apex:inputText value="{!query}" style="float:left;width:60%;height:25px;font-size:16px;"/>
+            <apex:commandButton value="Execute Query" reRender="result" />
+        </apex:pageBlock>
+        <apex:outputPanel id="result" layout="block" >
+            <c:QueryEditor query="{!query}" rendered="{!IF(query=='' || query==null, false, true)}"  />
+        </apex:outputPanel>
+    </apex:form>
+    
+</apex:page>
