@@ -1,0 +1,74 @@
+public class QueryResultsController {
+    
+    public String queryString;
+    public Boolean showInvalidQuery {get;set;}
+    public Boolean showNoRecord {get;set;}
+    public String invalidQueryMessage {get;set;}
+    public List<String> fieldLabels {get;set;}
+    public ApexPages.StandardSetController setController {get;set;}
+    
+    public QueryResultsController() {
+        showInvalidQuery = false;
+        showNoRecord = false;
+    }
+    public Boolean init{
+        get{
+            fetchResults();
+            return false;
+        }
+    }
+    
+    public void fetchResults(){
+        try{
+            List<SObject> result = Database.query('SELECT Name FROM Contact');
+            if(result.size() == 0){
+                showNoRecord = true;
+                showInvalidQuery = false;
+                return; 
+            }
+            Integer fieldCount = 0;
+            for(SObject obj : result){
+                if(obj.getPopulatedFieldsAsMap().keySet().size() > fieldCount){
+                    fieldLabels = new List<String>();
+                    fieldCount = obj.getPopulatedFieldsAsMap().keySet().size();
+                    fieldLabels.addAll(obj.getPopulatedFieldsAsMap().keySet());
+                }
+            }
+            //fieldLabels.sort();
+            setController = new ApexPages.StandardSetController(result);
+            setController.setPageSize(10);
+        }catch(QueryException e){
+            showInvalidQuery = true;
+            showNoRecord = false;
+            invalidQueryMessage = e.getMessage();
+        }
+    }
+    
+    public Boolean hasPrevious {
+        get {
+            return setController.getHasPrevious();
+        }
+        set;
+    }
+    
+    public Boolean hasNext {
+        get {
+            return setController.getHasNext();
+        }
+        set;
+    }
+    
+    public List<Contact> getResults(){
+        return setController!=null ? (List<Contact>) setController.getRecords() : null;
+    }
+    
+    public String getQueryString(){
+        system.debug('<<<<<<< GETTER >>>>>>>' + queryString);
+        return queryString;
+    }
+    public void setQueryString(String value){
+        system.debug('<<<<<< SETTER >>>>>>>' + value);
+        queryString = value;
+    }
+    
+}
